@@ -24,6 +24,26 @@ const GroupingGrid = () => {
         { id: 9, name: "James Newman", location: "Japan", gender: "male", col: "red", dob: "1998-03-22" },
     ]);
 
+    // 행 삭제
+    const deleteRow = (groupKey: string) => {
+        console.log(`Delete row in group: ${groupKey}`);
+        // 여기에 행 삭제 로직을 추가하세요.
+    };
+
+    // 행 추가
+    const addRow = (groupKey: string) => {
+        console.log(`Add row in group: ${groupKey}`);
+        const newRow = {
+            name: "New Person",
+            location: "Unknown",
+            gender: "unknown",
+            col: groupKey, // 그룹의 이름을 컬러 필드에 설정
+            dob: "2000-01-01"
+        };
+        tableInstance.current?.addRow(newRow, true);
+    };
+
+
     useEffect(() => {
         if (tableRef.current && !tableInstance.current) {
             tableInstance.current = new Tabulator(tableRef.current, {
@@ -40,7 +60,16 @@ const GroupingGrid = () => {
                 ],
                 groupBy: "col", // ✅ 그룹핑 기준 (location)
                 groupStartOpen: false, // 기본적으로 그룹 닫힘
-                groupToggleElement: "header", // 그룹 헤더 클릭 시 열기/닫기
+                // groupToggleElement: "header", // 그룹 헤더 클릭 시 열기/닫기
+
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                groupHeader: (value: string, count: number, data: any[], group: any) => {
+                    return `
+                        <span><strong>${value}</strong> (${count} items)</span>
+                        <button class="delete-row-btn" style="margin-left:10px; float: right; padding: 2px 5px; background: #b350af; color: white; border: none; cursor: pointer;">행 삭제</button>
+                        <button class="add-row-btn" style="margin-left:10px; float: right; padding: 2px 5px; background: #4CAF50; color: white; border: none; cursor: pointer;">행 추가</button>
+                    `;
+                },
             });
 
             // Group Events 참고하기
@@ -54,6 +83,24 @@ const GroupingGrid = () => {
                 console.log("groupFieldData",groupFieldData);
                 console.log("groupKeyData",groupKeyData);
             });
+            // 그룹 클릭 이벤트
+            tableInstance.current.on("groupClick", (event, group) => {
+                const groupKey = group.getKey();
+                console.log("group clicked", groupKey);
+
+                // 버튼에 이벤트 핸들러 추가
+                const addBtn = (event.target as HTMLElement).closest(".add-row-btn");
+                const deleteBtn = (event.target as HTMLElement).closest(".delete-row-btn");
+
+                if (addBtn) {
+                    addRow(group.getKey());
+                }
+
+                if (deleteBtn) {
+                    deleteRow(group.getKey());
+                }
+            });
+
         }
 
         return () => {
@@ -64,7 +111,28 @@ const GroupingGrid = () => {
         };
     }, []);
 
-    return (
+    // 행 추가 버튼 이벤트
+    document.querySelectorAll(".add-row-btn").forEach((button) => {
+        console.log('click');
+        button.addEventListener("click", function (event) {
+            console.log('click',button);
+            const groupKey = (event.target as HTMLElement).parentElement?.querySelector("strong")?.textContent;
+            if (groupKey) {
+                // 새 행 추가
+                const newRow = {
+                    name: "New Person",
+                    location: "Unknown",
+                    gender: "unknown",
+                    col: groupKey, // 그룹의 이름을 컬러 필드에 설정
+                    dob: "2000-01-01"
+                };
+                // 테이블에 새 행을 추가
+                tableInstance.current?.addRow(newRow, true);
+            }
+        });
+    });
+
+    return(
         <div>
             <h2 className="text-lg font-bold mb-4">Grouped Data Grid</h2>
             <div ref={tableRef} />
