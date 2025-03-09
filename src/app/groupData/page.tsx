@@ -76,17 +76,14 @@ const GroupingGrid = () => {
             tableInstance.current.on("cellClick", function (){
                 console.log("Cell clicked");
             });
-            tableInstance.current.on("groupClick", function (event, group){
+
+            // 그룹 클릭 이벤트
+            tableInstance.current.on("groupClick", (event, group) => {
                 console.log("group clicked");
                 const groupFieldData = group.getField();
                 const groupKeyData = group.getKey();
                 console.log("groupFieldData",groupFieldData);
                 console.log("groupKeyData",groupKeyData);
-            });
-            // 그룹 클릭 이벤트
-            tableInstance.current.on("groupClick", (event, group) => {
-                const groupKey = group.getKey();
-                console.log("group clicked", groupKey);
 
                 // 버튼에 이벤트 핸들러 추가
                 const addBtn = (event.target as HTMLElement).closest(".add-row-btn");
