@@ -79,11 +79,11 @@ const GroupingGrid = () => {
 
             // 그룹 클릭 이벤트
             tableInstance.current.on("groupClick", (event, group) => {
-                console.log("group clicked");
-                const groupFieldData = group.getField();
-                const groupKeyData = group.getKey();
-                console.log("groupFieldData",groupFieldData);
-                console.log("groupKeyData",groupKeyData);
+                // console.log("group clicked");
+                // const groupFieldData = group.getField();
+                // const groupKeyData = group.getKey();
+                // console.log("groupFieldData",groupFieldData);
+                // console.log("groupKeyData",groupKeyData);
 
                 // 버튼에 이벤트 핸들러 추가
                 const addBtn = (event.target as HTMLElement).closest(".add-row-btn");
@@ -91,10 +91,12 @@ const GroupingGrid = () => {
 
                 if (addBtn) {
                     addRow(group.getKey());
-                }
-
-                if (deleteBtn) {
+                } else if (deleteBtn) {
                     deleteRow(group.getKey());
+                }else {
+                    //팝업 띄우기
+                    console.log("Group clicked");
+                    window.open("https://tabulator.info/docs/6.3/format#icon","_blank","width=200, height=200");
                 }
             });
 
