@@ -5,9 +5,12 @@ import "tabulator-tables/dist/css/tabulator.min.css";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { RowComponent, TabulatorFull as Tabulator } from "tabulator-tables";
 
+
+//Movable Rows With Row Groups 참고해보기
 const GroupingGrid = () => {
     const tableRef = useRef<HTMLDivElement | null>(null);
     const tableInstance = useRef<Tabulator | null>(null);
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [tableData, setTableData] = useState([
         { id: 1, name: "Oli Bob", location: "United Kingdom", gender: "male", col: "red", dob: "1984-04-14" },
@@ -38,6 +41,18 @@ const GroupingGrid = () => {
                 groupBy: "col", // ✅ 그룹핑 기준 (location)
                 groupStartOpen: false, // 기본적으로 그룹 닫힘
                 groupToggleElement: "header", // 그룹 헤더 클릭 시 열기/닫기
+            });
+
+            // Group Events 참고하기
+            tableInstance.current.on("cellClick", function (){
+                console.log("Cell clicked");
+            });
+            tableInstance.current.on("groupClick", function (event, group){
+                console.log("group clicked");
+                const groupFieldData = group.getField();
+                const groupKeyData = group.getKey();
+                console.log("groupFieldData",groupFieldData);
+                console.log("groupKeyData",groupKeyData);
             });
         }
 
